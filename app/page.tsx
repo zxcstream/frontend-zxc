@@ -1,65 +1,126 @@
-import Image from "next/image";
-
+"use client";
+import { usePathname, useSearchParams } from "next/navigation";
+import LandingPage from "./landing-components/landing-page";
+import ReusableSwiper from "./reusable-display";
+import { movie_endpoints } from "@/constants/movie-endpoints";
+import { AnimatePresence, motion } from "motion/react";
+import SearchResult from "./search-components/search-results";
+import Header from "./header";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import { shuffleArray } from "@/lib/shuffle";
+import { useMemo } from "react";
+import ContinueWatching from "./continue-watching";
 export default function Home() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+  const isSearching = Boolean(query);
+  const pathname = usePathname();
+  const custom_list = useMemo(() => {
+    return shuffleArray([
+      {
+        id: 575604,
+        media_type: "movie",
+        custom_image: "/vo9tOxLlIHSVQgVt1auI6ndRIQj.jpg",
+        custom_logo: "",
+      },
+      {
+        id: 1062722,
+        media_type: "movie",
+        custom_image: "/hpXBJxLD2SEf8l2CspmSeiHrBKX.jpg",
+        custom_logo: "",
+      },
+      {
+        id: 1218925,
+        media_type: "movie",
+        custom_image: "/gqTz24ZRsCP6AKjARmEivY7m0cK.jpg",
+        custom_logo: "",
+      },
+      {
+        id: 60625,
+        media_type: "tv",
+        custom_image: "/o8kotfqa2w5iX8hptIocMx1HOkV.jpg",
+        custom_logo: "",
+      },
+      {
+        id: 66732,
+        media_type: "tv",
+        custom_image: "/hTWtybOC91veCgHAVt3ULZnj4up.jpg",
+        custom_logo: "/wx1Gm17tExax4qYB6mXPnc1UZB0.svg",
+      },
+      {
+        id: 1242898,
+        media_type: "movie",
+        custom_image: "/7hDFhV4ng4cHgSnxvO0MIb11Sbp.jpg",
+        custom_logo: "",
+      },
+      { id: 803796, media_type: "movie", custom_image: "", custom_logo: "" },
+      {
+        id: 1184918,
+        media_type: "movie",
+        custom_image: "/dlsglLDRgrtLIdnjvOXVETMslmb.jpg",
+        custom_logo: "/phhAK2k36JYA87qDHTke0hcGiJf.png",
+      },
+    ]);
+  }, []);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <LandingPage custom_list={custom_list} />
+      <AnimatePresence mode="wait">
+        {isSearching ? (
+          <motion.div
+            key="search"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              transition: {
+                delay: 0.2,
+                ease: "easeInOut",
+              },
+            }}
+            exit={{
+              opacity: 0,
+              transition: {
+                delay: 0.1,
+                ease: "easeInOut",
+              },
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <SearchResult />
+          </motion.div>
+        ) : (
+          <>
+            <ContinueWatching />
+            {movie_endpoints.map((tv) => (
+              <ReusableSwiper
+                key={tv.id}
+                id={tv.id}
+                endpoint={tv.endpoint}
+                params={tv.params}
+                displayName={tv.displayName}
+                label={tv.label}
+                type={tv.type}
+              />
+            ))}
+          </>
+        )}
+      </AnimatePresence>
+
+      <ScrollToTop />
+    </>
   );
 }
+
+//  <>
+//       <LandingPage />
+//       {movie_endpoints.map((tv) => (
+//         <ReusableSwiper
+//           key={tv.id}
+//           id={tv.id}
+//           endpoint={tv.endpoint}
+//           params={tv.params}
+//           displayName={tv.displayName}
+//           label={tv.label}
+//           type={tv.type}
+//         />
+//       ))}
+//     </>

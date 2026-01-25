@@ -1,0 +1,100 @@
+import { IconArrowLeft, IconChevronRight, IconX } from "@tabler/icons-react";
+import { ServerTypes } from "./hooks/useServerManager";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+export default function PlayerSettings({
+  serverIndex,
+  servers,
+  setSettings,
+  handleSelectServer,
+}: {
+  serverIndex: number;
+  servers: ServerTypes[];
+  setSettings: (settings: boolean) => void;
+  handleSelectServer: (i: number) => void;
+}) {
+  const [server, setServer] = useState(false);
+
+  return (
+    <div className="absolute inset-0  z-999 flex flex-col justify-center items-center gap-1.5 bg-black/50 backdrop-blur-xs">
+      <button
+        className="absolute top-0 right-0 p-9 "
+        onClick={() => setSettings(false)}
+      >
+        <IconX className="size-9" />
+      </button>
+      {server && (
+        <button
+          className="absolute top-0 left-0 p-9 "
+          onClick={() => {
+            setServer(false);
+          }}
+        >
+          <IconArrowLeft className="size-9" />
+        </button>
+      )}
+
+      {!server && (
+        <div className="w-md space-y-1.5">
+          <div
+            className="cursor-pointer flex w-full justify-between bg-black/8 backdrop-blur-xs py-4 px-8 rounded-full"
+            onClick={() => setServer(true)}
+          >
+            <h1 className="text-lg text-muted-foreground">Servers</h1>
+            <span className="flex gap-2 items-center">
+              <h1 className="text-xl font-medium">
+                {servers[serverIndex].name}
+              </h1>
+              <IconChevronRight className="size-5 text-muted-foreground" />
+            </span>
+          </div>
+          {servers[serverIndex].status === "available" && (
+            <>
+              <div className="cursor-pointer flex w-full justify-between bg-black/8 backdrop-blur-xs py-4 px-8 rounded-full">
+                <h1 className="text-lg text-muted-foreground">Quality</h1>
+                <span className="flex gap-2 items-center">
+                  <h1 className="text-xl font-medium">1080p</h1>
+                  <IconChevronRight className="size-5 text-muted-foreground" />
+                </span>
+              </div>
+              <div className="cursor-pointer flex w-full justify-between bg-black/8 backdrop-blur-xs py-4 px-8 rounded-full">
+                <h1 className="text-lg text-muted-foreground">Subtitle</h1>
+                <span className="flex gap-2 items-center">
+                  <h1 className="text-xl font-medium">English</h1>
+                  <IconChevronRight className="size-5 text-muted-foreground" />
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {server && (
+        <div className="grid lg:grid-cols-4 grid-cols-2 gap-8">
+          {servers.map((s, i) => {
+            // Determine border color based on server status
+            let borderColor = "";
+            if (s.status === "available") borderColor = "border-green-600";
+            else if (s.status === "failed") borderColor = "border-red-600";
+
+            return (
+              <button
+                key={i}
+                onClick={() => {
+                  setSettings(false);
+                  handleSelectServer(i);
+                }}
+                disabled={i === serverIndex}
+                className={`text-xl uppercase px-4 py-3 border-l-4 ${borderColor} ${
+                  i === serverIndex ? "bg-black/20" : "hover:bg-black/30"
+                }`}
+              >
+                {s.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

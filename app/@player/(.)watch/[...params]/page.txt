@@ -1,0 +1,70 @@
+"use client";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import logo from "@/assets/zxczxc.svg";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { AnimatePresence, motion } from "motion/react";
+import { Tailspin } from "ldrs/react";
+export default function Player() {
+  const router = useRouter();
+  const { params } = useParams();
+  const media_type = String(params?.[0]);
+  const id = Number(params?.[1]);
+  const season = Number(params?.[2]) || 1;
+  const episode = Number(params?.[3]) || 1;
+  const [open, setOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const handleCloseDrawer = (value: boolean) => {
+    setOpen(value);
+    if (!value) {
+      setTimeout(() => router.back(), 300);
+    }
+  };
+
+  const play =
+    media_type === "tv"
+      ? `https://www.zxcstream.xyz/player/tv/${id}/${season}/${episode}?back=true&server=0`
+      : `https://www.zxcstream.xyz/player/movie/${id}?back=true&server=0`;
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent showCloseButton={false}>
+        <DialogHeader className="sr-only">
+          <DialogTitle>PLAYER</DialogTitle>
+          <DialogDescription>zxc[stream] player</DialogDescription>
+        </DialogHeader>
+        <div className="relative h-full w-full">
+          <AnimatePresence mode="wait">
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/80 backdrop-blur-2xl gap-4"
+              >
+                <img src={logo.src} className="size-14 animate-pulse" alt="" />
+                <span className="flex items-center gap-2 text-muted-foreground tracking-wide text-sm ">
+                  Initializing...
+                  <Tailspin size="20" stroke="3" speed="0.9" color="white" />
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <iframe
+            height="100%"
+            width="100%"
+            src={play}
+            allowFullScreen
+            onLoad={() => setIsLoading(false)}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
