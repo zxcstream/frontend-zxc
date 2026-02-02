@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
       `https://blue-hat-477a.jerometecson333.workers.dev`,
 
       `https://square-darkness-1efb.amenohabakiri174.workers.dev`,
-      `https://orange-poetry-e481.jindaedalus2.workers.dev`,
+    
       `https://long-frog-ec4e.coupdegrace21799.workers.dev`,
 
       `https://dark-scene-567a.jinluxuz.workers.dev`,

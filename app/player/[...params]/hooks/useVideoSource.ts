@@ -43,17 +43,7 @@ export function useVideoSource({
     if (source.type === "hls") {
       if (Hls.isSupported()) {
         const hls = new Hls();
-        // {
-        //   fragLoadingMaxRetry: 0,
-        //   levelLoadingMaxRetry: 0,
-        //   manifestLoadingMaxRetry: 0,
-
-        //   fragLoadingTimeOut: 8000,
-        //   levelLoadingTimeOut: 8000,
-        //   manifestLoadingTimeOut: 8000,
-
-        //   backBufferLength: 90,
-        // }
+       
         hls.loadSource(source.link);
         hls.attachMedia(video);
         hlsRef.current = hls;

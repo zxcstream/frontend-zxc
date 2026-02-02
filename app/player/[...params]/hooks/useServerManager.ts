@@ -172,7 +172,10 @@ export function useServerManager({
     // Phase 2: validate M3U8
     const checkM3U8 = async () => {
       try {
-        const res = await fetch(source.link, { method: "HEAD" });
+        const res = await fetch(source.link, {
+          method: "HEAD",
+          headers: { Range: "bytes=0-1" },
+        });
 
         updateServerStatus(serverIndex, res.ok ? "available" : "failed");
 
