@@ -1,6 +1,6 @@
 import { fetchWithTimeout } from "@/lib/fetch-timeout";
 import { NextRequest, NextResponse } from "next/server";
-
+import crypto from "crypto";
 // --------------------------
 // In-memory mappings
 // --------------------------
@@ -12,13 +12,13 @@ let nextId = 1;
 // Helper functions
 // --------------------------
 function getInternalId(url: string) {
-  if (urlToIdMap.has(url)) return urlToIdMap.get(url)!;
-  const id = String(nextId++);
-  urlToIdMap.set(url, id);
-  idToUrlMap.set(id, url);
-  return id;
+  // generate a short hash of the URL
+  const hash = crypto.createHash("md5").update(url).digest("hex").slice(0, 8);
+  // store in maps (optional, keeps resolveUrl working)
+  urlToIdMap.set(url, hash);
+  idToUrlMap.set(hash, url);
+  return hash;
 }
-
 function resolveUrl(id: string) {
   return idToUrlMap.get(id);
 }
