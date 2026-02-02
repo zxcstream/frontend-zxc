@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     const pathLink = `https://api.videasy.net/myflixerzupcloud/sources-with-title?${qs}`;
 
     const pathLinkResponse = await fetchWithTimeout(
-      pathLink,
+      `https://orange-poetry-e481.jindaedalus2.workers.dev/?url=${encodeURIComponent(pathLink)}`,
       {
         headers: {
           "User-Agent":
