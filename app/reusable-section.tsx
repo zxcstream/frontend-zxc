@@ -335,7 +335,7 @@ export default function ReusableSection({
               <IconFilter2Bolt className="lg:size-6 size-5" />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="h-[50vh]">
+          <DrawerContent className="h-[50vh] lg:h-screen">
             <DrawerHeader className="p-2 lg:p-4 hidden lg:flex">
               <DrawerTitle className="text-lg tracking-wide">
                 <TitleReusable
