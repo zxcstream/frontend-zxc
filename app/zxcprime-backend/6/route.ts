@@ -2,6 +2,12 @@ import { fetchWithTimeout } from "@/lib/fetch-timeout";
 import { NextRequest, NextResponse } from "next/server";
 import { validateBackendToken } from "@/lib/validate-token";
 
+type Sources = {
+  link: string;
+  type: string;
+  language: string;
+  server: string;
+};
 export async function GET(req: NextRequest) {
   try {
     const id = req.nextUrl.searchParams.get("a");
@@ -47,52 +53,45 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const sourceLink =
+    const upstreamM3u8 =
       media_type === "tv"
-        ? `https://cdn.madplay.site/vxr/?id=${id}&type=tv&season=${season}&episode=${episode}`
-        : `https://cdn.madplay.site/vxr/?id=${id}&type=movie`;
+        ? `https://noticiastumbes.com/embed/xd/play.php?id=${id}&season=${season}&episode=${episode}`
+        : `https://noticiastumbes.com/embed/xd/play.php?id=${id}`;
 
-    const res = await fetchWithTimeout(
-      sourceLink,
-      {
-        headers: {
-          "User-Agent": "Mozilla/5.0",
-          Referer: "https://uembed.xyz/",
+    try {
+      const res = await fetchWithTimeout(
+        upstreamM3u8,
+        {
+          headers: {
+            Referer: "https://noticiastumbes.com/",
+            Origin: "https://noticiastumbes.com/",
+            "User-Agent": "Mozilla/5.0",
+            Accept: "*/*",
+          },
+          cache: "no-store",
         },
-      },
-      5000,
-    ); // 5-second timeout
+        8000, // 5-second timeout
+      );
 
-    if (!res.ok) {
+      const data = await res.json();
+      console.log("reeeeeeeeeeeeeeeeeeeeees", data);
+
+      const spanish = data.sources.find(
+        (f: Sources) => f.language === "latino",
+      ).link;
+      console.log("liiiiiiiiiiiiiiiiiiiiiiiiink", spanish);
+      return NextResponse.json({
+        success: true,
+        link: spanish,
+        type: "hls",
+      });
+    } catch (err) {
       return NextResponse.json(
-        { success: false, error: "Upstream request failed" },
-        { status: res.status },
+        { success: false, error: "Timed out" },
+        { status: 504 },
       );
     }
-
-    const data = await res.json();
-
-    if (!Array.isArray(data) || data.length === 0) {
-      return NextResponse.json(
-        { success: false, error: "No m3u8 stream found" },
-        { status: 404 },
-      );
-    }
-
-    const firstSource = data[0].file;
-
-    if (!firstSource)
-      return NextResponse.json(
-        { success: false, error: "No English stream found" },
-        { status: 404 },
-      );
-    // const type = /\.m3u8(\?|$)/i.test(firstSource.file) ? "hls" : "mp4";
-    return NextResponse.json({
-      success: true,
-      link: firstSource,
-      type: "hls",
-    });
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 },

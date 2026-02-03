@@ -184,3 +184,13 @@ export interface NetworkTypes {
   logo_path: string | null;
   origin_country: string;
 }
+export interface ProviderTypes {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string | null;
+  display_priority: number;
+}
+
+export interface ProviderResponse {
+  results: ProviderTypes[];
+}

@@ -79,3 +79,42 @@ export const swiperModalConfig = {
     },
   },
 };
+export const swiperConfigCompany = {
+  spaceBetween: 20,
+  navigation: true,
+  keyboard: { enabled: true },
+  scrollbar: { el: ".swiper-scrollbar", hide: false },
+  modules: [Navigation, Pagination, Keyboard, Scrollbar],
+  breakpoints: {
+    0: {
+      slidesPerView: 3,
+      slidesPerGroup: 3,
+      spaceBetween: 30,
+    },
+    640: {
+      slidesPerView: 3,
+      slidesPerGroup: 3,
+      spaceBetween: 12,
+    },
+    768: {
+      slidesPerView: 4,
+      slidesPerGroup: 4,
+      spaceBetween: 15,
+    },
+    1024: {
+      slidesPerView: 5,
+      slidesPerGroup: 5,
+      spaceBetween: 20,
+    },
+    1140: {
+      slidesPerView: 5,
+      slidesPerGroup: 5,
+      spaceBetween: 20,
+    },
+    1280: {
+      slidesPerView: 8,
+      slidesPerGroup: 8,
+      spaceBetween: 60,
+    },
+  },
+};

@@ -11,6 +11,7 @@ import { shuffleArray } from "@/lib/shuffle";
 import { useMemo } from "react";
 import ContinueWatching from "./continue-watching";
 import Footer from "./footer";
+import StreamProviders from "./stream-provider";
 export default function Home() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
@@ -91,6 +92,7 @@ export default function Home() {
         ) : (
           <>
             <ContinueWatching />
+            <StreamProviders />
             {movie_endpoints.map((tv) => (
               <ReusableSwiper
                 key={tv.id}

@@ -13,6 +13,7 @@ import { movie_endpoints } from "@/constants/movie-endpoints";
 import { notFound } from "next/navigation";
 import { GRID_CONFIG } from "@/lib/layout-density";
 import { useLayoutDensity } from "@/store/useLayoutDensity";
+import { COMPANIES } from "@/constants/movie-endpoints";
 export default function DiscoverResult() {
   const params = useParams();
   const slug = params.slug;
@@ -27,7 +28,7 @@ export default function DiscoverResult() {
   const { ref, inView } = useInView({
     threshold: 0.3,
   });
-  const END_POINTS = [...movie_endpoints];
+  const END_POINTS = [...movie_endpoints, ...COMPANIES];
   const findEndpoint = END_POINTS.find((endpoint) => endpoint.id === slug);
 
   if (!findEndpoint) {
@@ -36,7 +37,7 @@ export default function DiscoverResult() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetDiscoverInfinite<MovieTypes>({
       endpoint: `discover`,
-      media_type: "movie",
+      media_type: findEndpoint.type,
       params: findEndpoint.params,
     });
   const results = data?.pages.flatMap((p) => p.results) ?? [];
